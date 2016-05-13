@@ -105,28 +105,6 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/static-*/**");
     }
 
-    private AuthenticationProvider communityAuthenticationProvider() {
-        final Role user = new Role.Builder()
-                .setName(UserConfiguration.IDOL_USER_ROLE)
-                .setPrivileges(Collections.singleton("login"))
-                .build();
-
-        final Role admin = new Role.Builder()
-                .setName(UserConfiguration.IDOL_ADMIN_ROLE)
-                .setParent(Collections.singleton(user))
-                .build();
-
-        final Roles roles = new Roles(Arrays.asList(admin, user));
-
-        return new CommunityAuthenticationProvider(
-                configService,
-                userService,
-                roles,
-                Collections.singleton("login"),
-                grantedAuthoritiesMapper
-        );
-    }
-
     /////////////// END /////////////////////////
     /////////////////////////////////////////////
 
