@@ -32,7 +32,7 @@ public class UserConfiguration {
         return new OneToOneOrZeroSimpleAuthorityMapper(rolesMap);
     }
 
-    static String role(final String applicationRole) {
+    public static String role(final String applicationRole) {
         return "ROLE_" + applicationRole;
     }
 
