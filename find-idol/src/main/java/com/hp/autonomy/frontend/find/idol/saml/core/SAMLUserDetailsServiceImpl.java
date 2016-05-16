@@ -58,6 +58,7 @@ public class SAMLUserDetailsServiceImpl implements SAMLUserDetailsService {
         // data in the SAML assertion and return UserDetails object describing the user.
 
         String username = credential.getNameID().getValue();
+		System.out.println("User name: " + username);
         UserRoles userRoles = this.userService.getUser(username);
 
         if(!roles.areRolesAuthorized(new HashSet(userRoles.getRoles()), Collections.singleton("login"))) {

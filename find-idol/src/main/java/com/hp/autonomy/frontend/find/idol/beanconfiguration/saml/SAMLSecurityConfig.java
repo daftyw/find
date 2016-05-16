@@ -206,12 +206,12 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlResource urlResource;
 
         try {
-            urlResource = new UrlResource("file:///Users/wind/.keystore");
+            urlResource = new UrlResource("file:///c:/Users/Administrator/.keystore");
         } catch (MalformedURLException e) {
             return new EmptyKeyManager();
         }
 
-        String password = "drowssap";
+        String password = "password";
 
         Map<String, String> defaultMap = Maps.newHashMap();
         defaultMap.put("pockey", "pocpassword");

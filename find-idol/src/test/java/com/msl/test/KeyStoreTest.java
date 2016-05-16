@@ -20,7 +20,7 @@ public class KeyStoreTest {
     @Test
     public void testJKS() throws Exception {
 
-        String storePass = "drowssap";
+        String storePass = "password";
 
         Map<String, String> passwords = new HashMap<>();
 
@@ -28,7 +28,7 @@ public class KeyStoreTest {
         String defaultKey = "pockey";
 
         JKSKeyManager jksKeyManager = new JKSKeyManager
-                (new UrlResource("file:///Users/wind/.keystore"), storePass, passwords, defaultKey);
+                (new UrlResource("file:///c:/Users/Administrator/.keystore"), storePass, passwords, defaultKey);
 
         System.out.println(jksKeyManager.getDefaultCredential().getEntityId());
     }
