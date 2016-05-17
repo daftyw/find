@@ -206,7 +206,7 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlResource urlResource;
 
         try {
-            urlResource = new UrlResource("file:///c:/Users/Administrator/.keystore");
+            urlResource = new UrlResource("file:///" + System.getProperty("user.home") + "/.keystore");
         } catch (MalformedURLException e) {
             return new EmptyKeyManager();
         }

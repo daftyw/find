@@ -28,7 +28,7 @@ public class KeyStoreTest {
         String defaultKey = "pockey";
 
         JKSKeyManager jksKeyManager = new JKSKeyManager
-                (new UrlResource("file:///c:/Users/Administrator/.keystore"), storePass, passwords, defaultKey);
+                (new UrlResource("file:///"+ System.getProperty("user.home") + "/.keystore"), storePass, passwords, defaultKey);
 
         System.out.println(jksKeyManager.getDefaultCredential().getEntityId());
     }
