@@ -519,6 +519,10 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class);
         http
                 .authorizeRequests()
+                .antMatchers(FindController.PUBLIC_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
+                .antMatchers(FindController.PRIVATE_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE)
+                .antMatchers("/api/public/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
+                .antMatchers("/api/admin/**").hasRole(UserConfiguration.ADMIN_ROLE)
                 .antMatchers("/").permitAll()
                 .antMatchers("/error").permitAll()
                 .antMatchers("/saml/**").permitAll()
