@@ -54,7 +54,9 @@ public class SAMLIDOLAuthenticationProvider extends SAMLAuthenticationProvider {
         }
 
         Collection mappedAuthorities1 = this.grantedAuthoritiesMapper.mapAuthorities(grantedAuthorities);
-        return new User(username, null, mappedAuthorities1);
+		
+		System.out.println("map: " + mappedAuthorities1);
+        return new User(username,  "<password>", mappedAuthorities1);
     }
 
     @Override
