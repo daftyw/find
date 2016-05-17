@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolLoginSuccessHandler;
 import com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolSecurityCustomizer;
 import com.hp.autonomy.frontend.find.idol.beanconfiguration.UserConfiguration;
+import com.hp.autonomy.frontend.find.idol.saml.core.SAMLIDOLAuthenticationProvider;
 import com.hp.autonomy.frontend.find.idol.saml.core.SAMLUserDetailsServiceImpl;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.user.UserService;
@@ -141,9 +142,11 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
     // messages
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
-        SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();
-        samlAuthenticationProvider.setUserDetails(samlUserDetailsServiceImpl);
-        samlAuthenticationProvider.setForcePrincipalAsString(false);
+        SAMLIDOLAuthenticationProvider samlAuthenticationProvider = new SAMLIDOLAuthenticationProvider();
+        samlAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthoritiesMapper);
+        samlAuthenticationProvider.setUserService(userService);
+        //samlAuthenticationProvider.setUserDetails(samlUserDetailsServiceImpl);
+        //samlAuthenticationProvider.setForcePrincipalAsString(false);
         return samlAuthenticationProvider;
     }
 
@@ -516,14 +519,6 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class);
         http
                 .authorizeRequests()
-                //// IDOL : Begin ///
-                .antMatchers(FindController.PUBLIC_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
-                .antMatchers(FindController.PRIVATE_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE)
-                .antMatchers("/api/public/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
-                .antMatchers("/api/config/**").hasRole(UserConfiguration.CONFIG_ROLE)
-                .antMatchers("/config/**").hasRole(UserConfiguration.CONFIG_ROLE)
-                .antMatchers("/api/admin/**").hasRole(UserConfiguration.ADMIN_ROLE)
-                //// IDOL : End ////
                 .antMatchers("/").permitAll()
                 .antMatchers("/error").permitAll()
                 .antMatchers("/saml/**").permitAll()

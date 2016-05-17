@@ -19,12 +19,6 @@ public class SAMLMvcConfig extends WebMvcConfigurerAdapter{
     CurrentUserHandlerMethodArgumentResolver currentUserHandlerMethodArgumentResolver;
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/error").setViewName("error");
-    }
-
-    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers){
         argumentResolvers.add(currentUserHandlerMethodArgumentResolver);
     }

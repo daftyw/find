@@ -1,5 +1,6 @@
 package com.hp.autonomy.frontend.find.idol.saml.core;
 
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.idol.saml.steriotypes.CurrentUser;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
@@ -20,9 +21,10 @@ import java.security.Principal;
 @Component
 public class CurrentUserHandlerMethodArgumentResolver
     implements HandlerMethodArgumentResolver {
+
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.getParameterAnnotation(CurrentUser.class) != null
-                && methodParameter.getParameterType().equals(User.class);
+                && methodParameter.getParameterType().equals(CommunityPrincipal.class);
     }
 
     public Object resolveArgument(MethodParameter methodParameter,
