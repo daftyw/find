@@ -3,6 +3,10 @@ package com.hp.autonomy.frontend.find.idol.saml.core;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.user.UserRoles;
 import com.hp.autonomy.user.UserService;
+import org.opensaml.saml2.core.Attribute;
+import org.opensaml.xml.XMLObject;
+import org.opensaml.xml.schema.XSString;
+import org.opensaml.xml.schema.impl.XSAnyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +18,7 @@ import org.springframework.security.saml.SAMLCredential;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by wind on 5/17/2016 AD.
@@ -42,7 +47,24 @@ public class SAMLIDOLAuthenticationProvider extends SAMLAuthenticationProvider {
     @Override
     protected Object getUserDetails(SAMLCredential credential) {
         String username = credential.getNameID().getValue();
+
         System.out.println("User name: " + username);
+        System.out.println("Local entity: " + credential.getLocalEntityID());
+        System.out.println("Remote entity: " + credential.getRemoteEntityID());
+
+        if(credential.getAttributes() != null) {
+            List<Attribute> list = credential.getAttributes();
+            for(Attribute attr : list) {
+                System.out.println("-- Get attribute: " + attr.getFriendlyName());
+                System.out.println("-- Get name: " + attr.getName());
+                if(attr.getAttributeValues() != null) {
+                    for(XMLObject xmlObject : attr.getAttributeValues()) {
+                        System.out.println("---- Get values: " + getAttributeValue(xmlObject));
+                    }
+                }
+            }
+        }
+
         UserRoles userRoles = this.userService.getUser(username);
 
         ArrayList grantedAuthorities = new ArrayList();
@@ -57,6 +79,27 @@ public class SAMLIDOLAuthenticationProvider extends SAMLAuthenticationProvider {
 		
 		System.out.println("map: " + mappedAuthorities1);
         return new User(username,  "<password>", mappedAuthorities1);
+    }
+
+    private String getAttributeValue(XMLObject attributeValue)
+    {
+        return attributeValue == null ?
+                null :
+                attributeValue instanceof XSString ?
+                        getStringAttributeValue((XSString) attributeValue) :
+                        attributeValue instanceof XSAnyImpl ?
+                                getAnyAttributeValue((XSAnyImpl) attributeValue) :
+                                attributeValue.toString();
+    }
+
+    private String getStringAttributeValue(XSString attributeValue)
+    {
+        return attributeValue.getValue();
+    }
+
+    private String getAnyAttributeValue(XSAnyImpl attributeValue)
+    {
+        return attributeValue.getTextContent();
     }
 
     @Override
