@@ -46,33 +46,24 @@ public class SAMLIDOLAuthenticationProvider extends SAMLAuthenticationProvider {
 
     @Override
     protected Object getUserDetails(SAMLCredential credential) {
-        String username = credential.getNameID().getValue();
+        String nameId = credential.getNameID().getValue();
+        String role = credential.getAttributeAsString("idp-role");
+        String username = credential.getAttributeAsString("username");
 
-        System.out.println("User name: " + username);
         System.out.println("Local entity: " + credential.getLocalEntityID());
         System.out.println("Remote entity: " + credential.getRemoteEntityID());
+        System.out.println("User name: " + username);
+        System.out.println("Role: " + role);
 
-        if(credential.getAttributes() != null) {
-            List<Attribute> list = credential.getAttributes();
-            for(Attribute attr : list) {
-                System.out.println("-- Get attribute: " + attr.getFriendlyName());
-                System.out.println("-- Get name: " + attr.getName());
-                if(attr.getAttributeValues() != null) {
-                    for(XMLObject xmlObject : attr.getAttributeValues()) {
-                        System.out.println("---- Get values: " + getAttributeValue(xmlObject));
-                    }
-                }
-            }
-        }
-
+        // get Username:
         UserRoles userRoles = this.userService.getUser(username);
 
         ArrayList grantedAuthorities = new ArrayList();
         Iterator mappedAuthorities = userRoles.getRoles().iterator();
 
         while(mappedAuthorities.hasNext()) {
-            String role = (String)mappedAuthorities.next();
-            grantedAuthorities.add(new SimpleGrantedAuthority(role));
+            String simpleRole = (String)mappedAuthorities.next();
+            grantedAuthorities.add(new SimpleGrantedAuthority(simpleRole));
         }
 
         Collection mappedAuthorities1 = this.grantedAuthoritiesMapper.mapAuthorities(grantedAuthorities);
