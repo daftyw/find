@@ -30,7 +30,7 @@ public class LandingController {
         }
 
         model.addAttribute("username", username);
-        return "redirect:/public/#find";
+        return "redirect:/public/";
     }
 
 }
