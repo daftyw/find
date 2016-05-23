@@ -851,7 +851,6 @@ input.find-input {
 .search-text {
     font-family: Metric-Bold;
     color: red;
-    text-decoration: underline;
 }
 
 .also-searching-for {
