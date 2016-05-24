@@ -7,7 +7,7 @@ define([
 ], function(substitution) {
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "BI for Human Information © Copyright 2014-2015 Hewlett-Packard Development Company, L.P.",
+        'about.copyright': "Based on BI for Human Information © Copyright 2014-2015 Hewlett-Packard Development Company, L.P.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
@@ -22,9 +22,9 @@ define([
         'app.from': 'From',
         'app.loading': 'Loading...',
         'app.logout': 'Logout',
-        'app.name': 'HPE BI for Human Information',
-        'app.name.split.firstLine': 'HPE BI for',
-        'app.name.split.secondLine': 'Human Information',
+        'app.name': 'TISCO Search Engine',
+        'app.name.split.firstLine': 'TISCO',
+        'app.name.split.secondLine': 'Search Engine',
         'app.ok': 'OK',
         'app.rename': 'Rename',
         'app.reset': 'Reset',
