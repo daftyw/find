@@ -540,7 +540,7 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         http
                 .logout()
-                .logoutSuccessUrl("/public/");
+                .logoutSuccessUrl("/");
     }
 
     /**
