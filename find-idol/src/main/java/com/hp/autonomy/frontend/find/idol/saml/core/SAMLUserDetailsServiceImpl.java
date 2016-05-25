@@ -64,17 +64,38 @@ public class SAMLUserDetailsServiceImpl implements SAMLUserDetailsService {
         if(!roles.areRolesAuthorized(new HashSet(userRoles.getRoles()), Collections.singleton("login"))) {
             throw new BadCredentialsException("Bad credentials");
         } else {
+
+            String role = credential.getAttributeAsString("idp-role");
+            String idpUsername = credential.getAttributeAsString("username");
+
+            System.out.println("Local entity: " + credential.getLocalEntityID());
+            System.out.println("Remote entity: " + credential.getRemoteEntityID());
+            System.out.println("User name: " + username);
+            System.out.println("Role: " + role);
+
             ArrayList grantedAuthorities = new ArrayList();
-            Iterator mappedAuthorities = userRoles.getRoles().iterator();
+            Iterator mappedAuthorities = manipulateRole(userRoles.getRoles().iterator(), role);
 
             while(mappedAuthorities.hasNext()) {
-                String role = (String)mappedAuthorities.next();
-                grantedAuthorities.add(new SimpleGrantedAuthority(role));
+                String simpleRole = (String)mappedAuthorities.next();
+                grantedAuthorities.add(new SimpleGrantedAuthority(simpleRole));
             }
 
             Collection mappedAuthorities1 = this.grantedAuthoritiesMapper.mapAuthorities(grantedAuthorities);
-            return new UsernamePasswordAuthenticationToken(new CommunityPrincipal(userRoles.getUid(), username, userRoles.getSecurityInfo()), null, mappedAuthorities1);
+            System.out.println("map: " + mappedAuthorities1);
+            return new User(username,  "<password>", mappedAuthorities1);
         }
 
+    }
+
+    /**
+     *
+     * @param mappedAuthorities
+     * @param role
+     * @return
+     */
+    protected Iterator manipulateRole(Iterator mappedAuthorities, String role) {
+        // Add role mapping code here
+        return mappedAuthorities;
     }
 }

@@ -56,6 +56,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -141,9 +142,8 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
         SAMLIDOLAuthenticationProvider samlAuthenticationProvider = new SAMLIDOLAuthenticationProvider();
-        samlAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthoritiesMapper);
         samlAuthenticationProvider.setUserService(userService);
-        //samlAuthenticationProvider.setUserDetails(samlUserDetailsServiceImpl);
+        samlAuthenticationProvider.setUserDetails(samlUserDetailsServiceImpl);
         //samlAuthenticationProvider.setForcePrincipalAsString(false);
         return samlAuthenticationProvider;
     }
@@ -296,6 +296,7 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
                     new ExtendedMetadataDelegate(resourceBackedMetadataProvider, extendedMetadata());
             extendedMetadataDelegate.setMetadataTrustCheck(true);
             extendedMetadataDelegate.setMetadataRequireSignature(false);
+
             return extendedMetadataDelegate;
         } catch (Exception e) {
             throw new MetadataProviderException(e);
@@ -320,7 +321,6 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
         MetadataGenerator metadataGenerator = new MetadataGenerator();
         metadataGenerator.setExtendedMetadata(extendedMetadata());
         metadataGenerator.setIncludeDiscoveryExtension(false);
-        metadataGenerator.setEntityBaseURL("http://54.169.90.158:8020");
         return metadataGenerator;
     }
 
@@ -334,9 +334,21 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
     // Handler deciding where to redirect user after successful login
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler() {
+        /*
         SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler =
                 new SavedRequestAwareAuthenticationSuccessHandler();
         successRedirectHandler.setDefaultTargetUrl("/landing");
+        */
+
+        final SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler = new IdolLoginSuccessHandler(
+                "/config",
+                FindController.PUBLIC_PATH,
+                FindController.PRIVATE_PATH,
+                UserConfiguration.role(UserConfiguration.CONFIG_ROLE),
+                UserConfiguration.role(UserConfiguration.ADMIN_ROLE),
+                authenticationInformationRetriever
+        );
+
         return successRedirectHandler;
     }
 
@@ -528,7 +540,7 @@ public class SAMLSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         http
                 .logout()
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/public/");
     }
 
     /**

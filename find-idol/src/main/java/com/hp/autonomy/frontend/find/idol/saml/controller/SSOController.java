@@ -1,8 +1,10 @@
 package com.hp.autonomy.frontend.find.idol.saml.controller;
 
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.saml.metadata.MetadataManager;
@@ -11,7 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 
 /**
@@ -20,34 +24,6 @@ import java.util.Set;
 @Controller
 @RequestMapping("/saml")
 public class SSOController {
-
-    // Logger
-    private static final Logger LOG = LoggerFactory
-            .getLogger(SSOController.class);
-
-    @Autowired
-    private MetadataManager metadata;
-
-    @RequestMapping(value = "/idpSelection", method = RequestMethod.GET)
-    public String idpSelection(HttpServletRequest request, Model model) {
-        if (!(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
-            LOG.warn("The current user is already logged.");
-            return "redirect:/landing";
-
-        } else {
-            if (isForwarded(request)) {
-                Set<String> idps = metadata.getIDPEntityNames();
-                for (String idp : idps)
-                    LOG.info("Configured Identity Provider for SSO: " + idp);
-                model.addAttribute("idps", idps);
-                return "saml/idpselection";
-
-            } else {
-                LOG.warn("Direct accesses to '/idpSelection' route are not allowed");
-                return "redirect:/";
-            }
-        }
-    }
 
     /*
      * Checks if an HTTP request is forwarded from servlet.

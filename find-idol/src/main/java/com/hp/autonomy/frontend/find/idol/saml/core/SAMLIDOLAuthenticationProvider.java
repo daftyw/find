@@ -27,70 +27,10 @@ public class SAMLIDOLAuthenticationProvider extends SAMLAuthenticationProvider {
 
     private UserService userService;
 
-    private GrantedAuthoritiesMapper grantedAuthoritiesMapper;
-
     public SAMLIDOLAuthenticationProvider() {}
-
-    public SAMLIDOLAuthenticationProvider(UserService userService, GrantedAuthoritiesMapper grantedAuthoritiesMapper) {
-        this.userService = userService;
-        this.grantedAuthoritiesMapper = grantedAuthoritiesMapper;
-    }
-
-    public void setGrantedAuthoritiesMapper(GrantedAuthoritiesMapper grantedAuthoritiesMapper) {
-        this.grantedAuthoritiesMapper = grantedAuthoritiesMapper;
-    }
 
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    @Override
-    protected Object getUserDetails(SAMLCredential credential) {
-        String nameId = credential.getNameID().getValue();
-        String role = credential.getAttributeAsString("idp-role");
-        String username = credential.getAttributeAsString("username");
-
-        System.out.println("Local entity: " + credential.getLocalEntityID());
-        System.out.println("Remote entity: " + credential.getRemoteEntityID());
-        System.out.println("User name: " + username);
-        System.out.println("Role: " + role);
-
-        // get Username:
-        UserRoles userRoles = this.userService.getUser(username);
-
-        ArrayList grantedAuthorities = new ArrayList();
-        Iterator mappedAuthorities = userRoles.getRoles().iterator();
-
-        while(mappedAuthorities.hasNext()) {
-            String simpleRole = (String)mappedAuthorities.next();
-            grantedAuthorities.add(new SimpleGrantedAuthority(simpleRole));
-        }
-
-        Collection mappedAuthorities1 = this.grantedAuthoritiesMapper.mapAuthorities(grantedAuthorities);
-		
-		System.out.println("map: " + mappedAuthorities1);
-        return new User(username,  "<password>", mappedAuthorities1);
-    }
-
-    private String getAttributeValue(XMLObject attributeValue)
-    {
-        return attributeValue == null ?
-                null :
-                attributeValue instanceof XSString ?
-                        getStringAttributeValue((XSString) attributeValue) :
-                        attributeValue instanceof XSAnyImpl ?
-                                getAnyAttributeValue((XSAnyImpl) attributeValue) :
-                                attributeValue.toString();
-    }
-
-    private String getStringAttributeValue(XSString attributeValue)
-    {
-        return attributeValue.getValue();
-    }
-
-    private String getAnyAttributeValue(XSAnyImpl attributeValue)
-    {
-        return attributeValue.getTextContent();
     }
 
     @Override
@@ -100,4 +40,5 @@ public class SAMLIDOLAuthenticationProvider extends SAMLAuthenticationProvider {
         UserRoles userRoles = this.userService.getUser(username);
         return new CommunityPrincipal(userRoles.getUid(), username, userRoles.getSecurityInfo());
     }
+
 }
